@@ -4,11 +4,11 @@ import {Badge} from "@/components/ui/badge.jsx";
 import {Button} from "@/components/ui/button.jsx";
 import {brandOptionsMap, categoryOptionsMap} from "@/config/index.jsx";
 
-function ShoppingProductTile({product}) {
+function ShoppingProductTile({product,handleGetProductDetails,handleAddToCart}) {
 
     return (
         <Card className='w-full max-w-sm mx-auto'>
-            <div>
+            <div onClick={()=>handleGetProductDetails(product?._id)}>
                 <div className='relative'>
                     <img
                     src={product.image}
@@ -37,10 +37,10 @@ function ShoppingProductTile({product}) {
 
                     </div>
                 </CardContent>
-                <CardFooter>
-                    <Button className='w-fulls'>Add to cart</Button>
-                </CardFooter>
             </div>
+            <CardFooter>
+                <Button onClick={()=>handleAddToCart(product?._id)} className='w-full'>Add to cart</Button>
+            </CardFooter>
         </Card>
     );
 }

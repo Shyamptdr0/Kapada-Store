@@ -6,6 +6,7 @@ const cors = require("cors");
 const authRouter = require("./routes/auth/auth-routes")
 const adminProductsRouter = require("./routes/admin/products-routes")
 const shopProductsRouter = require("./routes/shop/product-route")
+const shopCartRouter = require("./routes/shop/cart-route")
 
 mongoose.connect("mongodb+srv://shyam8patidar:hHLJ6fuTVCVkejM9@cluster0.08ah5.mongodb.net/"
 ).then(()=>console.log("MongoDB is connected!"))
@@ -33,5 +34,6 @@ app.use(express.json());
 app.use('/api/auth', authRouter)
 app.use('/api/admin/products',adminProductsRouter);
 app.use('/api/shop/products', shopProductsRouter);
+app.use('/api/shop/cart',shopCartRouter)
 
 app.listen(PORT, () => console.log(`Listening on port ${PORT}!`));
