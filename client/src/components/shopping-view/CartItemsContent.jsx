@@ -10,8 +10,26 @@ function UserCartItemsContent({cartItem}) {
 
     const {user} = useSelector(state => state.auth)
     const dispatch = useDispatch()
+    const {cartItems} = useSelector(state => state.shopCart)
+    const {productList} = useSelector((state) => state.shopProducts);
 
     function handleUpdateQuantity(getCartItem, typeOfAction){
+        if (typeOfAction === 'plus'){
+            let getCartItems = cartItems.items || []
+
+            if (getCartItems){
+                const indexOfCurrentCartItem = getCartItems.findIndex(item => item.productId === getCartItem?.productId )
+                const getCurrentProductIndex = productList.findIndex(product => product._id === getCartItem?.productId)
+                const getTotalStock = productList[getCurrentProductIndex].totalStock
+                if (indexOfCurrentCartItem > -1){
+                    const getQuantity = getCartItems[indexOfCurrentCartItem].quantity;
+                    if (getQuantity + 1 > getTotalStock){
+                        toast.error(  `Only ${getQuantity} quantity can be added for this item` )
+                        return;
+                    }
+                }
+            }
+        }
      dispatch(updateCartQuantity({
          userId : user?.id,
          productId : getCartItem?.productId,

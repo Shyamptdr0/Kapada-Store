@@ -1,9 +1,10 @@
 import React from 'react';
+import AdminOrdersView from "@/components/admin-view/Orders.jsx";
 
-function AdminOrders(props) {
+function AdminOrders() {
     return (
         <div>
-            Admin Orders
+           <AdminOrdersView/>
         </div>
     );
 }

@@ -37,11 +37,14 @@ function ShoppingListing() {
 
     const dispatch = useDispatch();
     const {productList, productDetails} = useSelector((state) => state.shopProducts);
+    const {cartItems} = useSelector(state => state.shopCart)
     const {user} =useSelector(state => state.auth)
     const [filters, setFilters] = useState({});
     const [sort, setSort] = useState(null);
     const [searchParams,setSearchParams] = useSearchParams()
     const [openDetailsDialog, setOpenDetailsDialog] = useState(false)
+
+    const categorySearchParams = searchParams.get('category')
 
     function handleSort(value){
         setSort(value)
@@ -77,7 +80,19 @@ function ShoppingListing() {
 
     }
 
-    function handleAddToCart(getCurrentProductId){
+    function handleAddToCart(getCurrentProductId , getTotalStock){
+        let getCartItems = cartItems.items || []
+        if (getCartItems){
+            const indexOfCurrentItem = getCartItems.findIndex(item => item.productId === getCurrentProductId )
+
+            if (indexOfCurrentItem > -1){
+                const getQuantity = getCartItems[indexOfCurrentItem].quantity;
+                if (getQuantity + 1 > getTotalStock){
+                    toast.error(  `Only ${getQuantity} quantity can be added for this item` )
+                    return;
+                }
+            }
+        }
         dispatch(addToCart({userId:user?.id ,
             productId: getCurrentProductId,
             quantity:1}))
@@ -93,7 +108,7 @@ function ShoppingListing() {
     useEffect(() => {
         setSort("price-lowtohigh")
         setFilters(JSON.parse(sessionStorage.getItem('filters')) || {})
-    }, []);
+    }, [categorySearchParams]);
 
 
     useEffect(() => {
@@ -114,9 +129,9 @@ function ShoppingListing() {
     }, [productDetails]);
 
 
-
+    console.log(productList, "productlist")
     return (
-        <div className='grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 p-4 md:p-6'>
+        <div className='grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 p-4 md:p-6 mt-16'>
          <ProductCategoryFilter filters={filters} handleFilter={handleFilter} />
             <div className='bg-background w-full rounded-lg shadow-sm'>
                 <div className='p-4 border-b flex items-center justify-between'>
@@ -161,7 +176,8 @@ function ShoppingListing() {
             <ProductDetailsDialog
                 open={openDetailsDialog}
                 setOpen={setOpenDetailsDialog}
-                productDetails={productDetails}/>
+                productDetails={productDetails}
+            />
         </div>
     );
 }
