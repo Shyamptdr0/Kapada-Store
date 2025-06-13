@@ -26,7 +26,7 @@ const app = express()
 const PORT = process.env.PORT || 5000;
 
 app.use(cors({
-    origin: "https://kapada-store-1.onrender.com",
+    origin: process.env.CLIENT_BASE_URL,
     methods: "GET,POST,PUT,DELETE",
     allowedHeaders: [
         "Content-type",
