@@ -12,7 +12,7 @@ import {
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu.jsx";
 import {Avatar, AvatarFallback} from "@/components/ui/avatar.jsx";
-import {logoutUser} from "@/store/auth-slice/index.js";
+import {logoutUser, resetTokenAndCrendentails} from "@/store/auth-slice/index.js";
 import UserCartWrapper from "@/components/shopping-view/CartWrapper.jsx";
 import {fetchCartItems} from "@/store/shop/cart-slice/index.js";
 import {Label} from "@/components/ui/label.jsx";
@@ -54,7 +54,10 @@ function HeaderRightContent(){
 
 
     function handleLogout(){
-        dispatch(logoutUser())
+       // dispatch(logoutUser())
+        dispatch(resetTokenAndCrendentails())
+        sessionStorage.clear()
+        navigate('/auth/login')
     }
 
 

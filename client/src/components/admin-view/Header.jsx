@@ -2,15 +2,20 @@ import React from 'react';
 import {Button} from "@/components/ui/button.jsx";
 import {AlignJustify, LogOut} from "lucide-react";
 import {useDispatch} from "react-redux";
-import {logoutUser} from "@/store/auth-slice/index.js";
+import {logoutUser, resetTokenAndCrendentails} from "@/store/auth-slice/index.js";
+import {useNavigate} from "react-router-dom";
 
 
 function AdminHeader({setOpen}) {
 
     const dispatch = useDispatch();
+    const navigate = useNavigate()
 
     function handleLogout() {
-        dispatch(logoutUser())
+        //dispatch(logoutUser())
+        dispatch(resetTokenAndCrendentails())
+        sessionStorage.clear()
+        navigate('/auth/login')
     }
     return (
         <header className="flex items-center justify-between px-4 py-3 bg-background border-bottom">
