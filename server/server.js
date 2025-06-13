@@ -1,4 +1,7 @@
 
+require('dotenv').config()
+
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
@@ -14,15 +17,16 @@ const shopSearchRouter = require("./routes/shop/search-route")
 const shopReviewRouter = require("./routes/shop/review-route")
 const commonFeatureRouter = require("./routes/common/feature-route")
 
-mongoose.connect("mongodb+srv://shyam8patidar:hHLJ6fuTVCVkejM9@cluster0.08ah5.mongodb.net/"
-).then(()=>console.log("MongoDB is connected!"))
+mongoose
+    .connect(process.env.MONGODB_URL)
+    .then(()=>console.log("MongoDB is connected!"))
     .catch((error)=>console.log(error));
 
 const app = express()
 const PORT = process.env.PORT || 5000;
 
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: process.env.CLIENT_BASE_URL,
     methods: "GET,POST,PUT,DELETE",
     allowedHeaders: [
         "Content-type",

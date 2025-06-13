@@ -3,9 +3,9 @@ const multer = require('multer');
 
 // Cloudinary config
 cloudinary.config({
-    cloud_name: 'dvyx5bqim',
-    api_key: '146638451475577',
-    api_secret: 'LnEwIFszz0kFBx7NQw6BfuI_qsQ',
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 // Multer setup with limits and validation
