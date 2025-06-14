@@ -160,7 +160,7 @@ const getAllOrdersByUser = async (req, res)=>{
         const orders  = await Order.find({userId})
 
         if (!orders.length){
-           return  req.status(404).json({
+           return  res.status(404).json({
                success : false,
                message : "no orders found"
            })
@@ -189,7 +189,7 @@ const getOrdersDetails = async (req, res)=>{
         const orders  = await Order.findById(id)
 
         if (!orders){
-            return  req.status(404).json({
+            return  res.status(404).json({
                 success : false,
                 message : "Order not found!"
             })

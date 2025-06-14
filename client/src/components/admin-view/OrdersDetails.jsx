@@ -100,7 +100,9 @@ function AdminOrdersDetailsView({orderDetails}) {
                         <div className="grid gap-2">
                             <div className="font-medium">Shipping Info</div>
                             <div className="grid gap-0.5 text-muted-foreground">
-                                <span>UserName: {user.userName}</span>
+                                <span>User Name: {orderDetails?.userId?.userName}</span>
+                                <span>User Email: {orderDetails?.userId?.email}</span>
+
                                 <span>Address: {orderDetails?.addressInfo?.address}</span>
                                 <span>City: {orderDetails?.addressInfo?.city}</span>
                                 <span>Pincode: {orderDetails?.addressInfo?.pincode}</span>

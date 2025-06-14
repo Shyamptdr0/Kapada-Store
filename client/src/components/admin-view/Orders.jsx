@@ -5,7 +5,11 @@ import {Button} from "@/components/ui/button.jsx";
 import {Dialog} from "@/components/ui/dialog.jsx";
 import AdminOrdersDetailsView from "@/components/admin-view/OrdersDetails.jsx";
 import {useDispatch, useSelector} from "react-redux";
-import {getAllOrderForAdmin, getOrdersDetailsForAdmin} from "@/store/admin-slice/orders-slice/index.js";
+import {
+    deleteOrderById,
+    getAllOrderForAdmin,
+    getOrdersDetailsForAdmin
+} from "@/store/admin-slice/orders-slice/index.js";
 import {Badge} from "@/components/ui/badge.jsx";
 import {resetOrdersDetails} from "@/store/admin-slice/orders-slice";
 
@@ -76,14 +80,25 @@ function AdminOrdersView() {
                                                 dispatch(resetOrdersDetails())
                                             }}
                                             >
-                                                <Button
-                                                    onClick={() => handleFetchOrderDetails(orderItem?._id)}
-                                                >
-                                                    View Details
-                                                </Button>
+                                                <div className="flex flex-wrap gap-2">
+                                                    <Button
+                                                        className="bg-blue-600 text-white"
+                                                        onClick={() => handleFetchOrderDetails(orderItem?._id)}
+                                                    >
+                                                        View Details
+                                                    </Button>
+
+                                                    <Button
+                                                        className="bg-red-600 text-white"
+                                                        onClick={() => dispatch(deleteOrderById(orderItem?._id))}
+                                                    >
+                                                        Delete
+                                                    </Button>
+                                                </div>
                                                 <AdminOrdersDetailsView orderDetails={orderDetails}/>
                                             </Dialog>
                                         </TableCell>
+
                                     </TableRow>)
                                 : null
                         }

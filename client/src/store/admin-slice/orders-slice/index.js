@@ -31,6 +31,14 @@ export const updateOrderStatus = createAsyncThunk('/order/updateOrderStatus',
         return response.data;
     })
 
+export const deleteOrderById = createAsyncThunk('/order/deleteOrderById',
+    async(id, { dispatch }) => {
+        const response = await axios.delete(`${import.meta.env.VITE_API_URL}/api/admin/orders/delete/${id}`);
+        // Refresh orders after deletion
+        dispatch(getAllOrderForAdmin());
+        return response.data;
+    });
+
 
 const adminOrderSlice = createSlice({
     name : 'adminOrderSlice',

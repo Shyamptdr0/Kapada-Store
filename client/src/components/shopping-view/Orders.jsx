@@ -30,7 +30,6 @@ function ShoppingOrders() {
         }
     }, [orderDetails]);
 
-    console.log(orderDetails, 'orderDetails')
 
     return (
        <Card>
