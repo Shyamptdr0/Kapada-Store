@@ -34,7 +34,7 @@ import {useNavigate} from "react-router-dom";
 import ProductDetailsDialog from "@/components/shopping-view/ProductDetails";
 import {getFeatureImages} from "@/store/common-slice/index.js";
 
-const slides = [bannerOne, bannerTwo, bannerThree];
+// const slides = [bannerOne, bannerTwo, bannerThree];
 
 const categories = [
     {id: "men", label: "Men", icon: Shirt},
@@ -92,11 +92,13 @@ function ShoppingHome() {
     };
 
     useEffect(() => {
-        const timer = setInterval(() => {
-            setCurrentSlide((prev) => (prev + 1) % slides.length);
-        }, 5000);
-        return () => clearInterval(timer);
-    }, []);
+        if (featureImageList?.length > 0) {
+            const timer = setInterval(() => {
+                setCurrentSlide((prev) => (prev + 1) % featureImageList.length);
+            }, 5000);
+            return () => clearInterval(timer);
+        }
+    }, [featureImageList]);
 
     useEffect(() => {
         dispatch(fetchAllFilteredProducts({filterParams: {}, sortParams: "price-lowtohigh"}));
@@ -134,7 +136,7 @@ function ShoppingHome() {
                     variant="outline"
                     size="icon"
                     onClick={() =>
-                        setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)
+                        setCurrentSlide((prev) => (prev - 1 + slides.length) % featureImageList.length)
                     }
                     className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-white/80"
                 >
@@ -144,7 +146,7 @@ function ShoppingHome() {
                     variant="outline"
                     size="icon"
                     onClick={() =>
-                        setCurrentSlide((prev) => (prev + 1) % slides.length)
+                        setCurrentSlide((prev) => (prev + 1) % featureImageList.length)
                     }
                     className="absolute top-1/2 right-2 transform -translate-y-1/2 bg-white/80"
                 >
@@ -165,7 +167,7 @@ function ShoppingHome() {
                             >
                                 <CardContent className="flex flex-col items-center justify-center p-6">
                                     {typeof category.icon === "string" ? (
-                                        <img src={category.icon} className="w-10 h-10 mb-4"/>
+                                        <img src={category.icon} alt='image' className="w-10 h-10 mb-4"/>
                                     ) : (
                                         <category.icon className="w-10 h-10 mb-4 text-primary"/>
                                     )}
