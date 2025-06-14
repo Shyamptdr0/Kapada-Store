@@ -48,7 +48,7 @@ function AdminOrdersDetailsView({ orderDetails }) {
     }
 
     return (
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent className="max-h-[90vh] w-full sm:max-w-3xl p-4 sm:p-6 overflow-y-auto rounded-xl">
             <div className="grid gap-6">
                 <div>
                     <div className="grid gap-2">
@@ -99,7 +99,7 @@ function AdminOrdersDetailsView({ orderDetails }) {
                             <ul className="grid gap-3">
                                 {orderDetails?.cartItems?.length > 0 &&
                                     orderDetails.cartItems.map((item, index) => (
-                                        <li key={index} className="flex items-center justify-between">
+                                        <li key={index} className="flex flex-col sm:flex-row sm:items-center justify-between">
                                             <span>Title: {item.title}</span>
                                             <span>Quantity: {item.quantity}</span>
                                             <span>Price: ${item.price}</span>
