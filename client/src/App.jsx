@@ -49,7 +49,7 @@ function App() {
         dispatch(checkAuth(token))
     }, [dispatch]);
 
-    if(isLoading)return  <Skeleton className="w-full bg-black h-[600px] " />
+    if(isLoading)return  <Skeleton className="w-full h-full bg-grey " />
 
 
     return (

@@ -1,21 +1,23 @@
-import React, {useEffect, useState} from 'react';
-import {Link, useLocation, useNavigate, useSearchParams} from "react-router-dom";
-import {CircleUser, House, LogOut, Menu, ShoppingCart} from "lucide-react";
-import {Sheet, SheetContent, SheetTrigger} from "@/components/ui/sheet.jsx";
-import {Button} from "@/components/ui/button.jsx";
-import {useDispatch, useSelector} from "react-redux";
-import {shoppingViewHeaderMenuItems} from "@/config/index.jsx";
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { CircleUser, House, LogOut, Menu, ShoppingCart } from "lucide-react";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet.jsx";
+import { Button } from "@/components/ui/button.jsx";
+import { useDispatch, useSelector } from "react-redux";
+import { shoppingViewHeaderMenuItems } from "@/config/index.jsx";
 import {
     DropdownMenu,
-    DropdownMenuContent, DropdownMenuItem,
-    DropdownMenuLabel, DropdownMenuSeparator,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu.jsx";
-import {Avatar, AvatarFallback} from "@/components/ui/avatar.jsx";
-import {logoutUser, resetTokenAndCrendentails} from "@/store/auth-slice/index.js";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar.jsx";
+import { resetTokenAndCrendentails } from "@/store/auth-slice/index.js";
 import UserCartWrapper from "@/components/shopping-view/CartWrapper.jsx";
-import {fetchCartItems} from "@/store/shop/cart-slice/index.js";
-import {Label} from "@/components/ui/label.jsx";
+import { fetchCartItems } from "@/store/shop/cart-slice/index.js";
+import { Label } from "@/components/ui/label.jsx";
 
 // MenuItems Component
 function MenuItems({ onItemClick }) {
@@ -40,11 +42,11 @@ function MenuItems({ onItemClick }) {
     }
 
     return (
-        <nav className='flex flex-col  mt-10 ml-6 mb-3 lg:mb-0 lg:mt-0 lg:items-center gap-6 lg:flex-row'>
+        <nav className='flex flex-col mt-10 ml-6 mb-3 lg:mb-0 lg:mt-0 lg:items-center gap-6 lg:flex-row'>
             {shoppingViewHeaderMenuItems.map((menuItem) => (
                 <Label
                     onClick={() => handleNavigate(menuItem)}
-                    className=' text-sm font-medium cursor-pointer'
+                    className='text-sm font-medium cursor-pointer'
                     key={menuItem.id}
                 >
                     {menuItem.label}
@@ -54,20 +56,15 @@ function MenuItems({ onItemClick }) {
     );
 }
 
-// HeaderRightContent Component
-function HeaderRightContent({ onCloseMenu }) {
-    const { user } = useSelector(state => state.auth);
+// ShoppingHeader Component
+function ShoppingHeader(props) {
+    const { isAuthenticated, user } = useSelector(state => state.auth);
     const { cartItems } = useSelector(state => state.shopCart);
-    const [openCartSheet, setOpenCartSheet] = useState(false);
-    const navigate = useNavigate();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-    function handleLogout() {
-        dispatch(resetTokenAndCrendentails());
-        sessionStorage.clear();
-        navigate('/auth/login');
-        if (onCloseMenu) onCloseMenu();
-    }
+    const [openMenuSheet, setOpenMenuSheet] = useState(false);
+    const [openCartSheet, setOpenCartSheet] = useState(false);
 
     useEffect(() => {
         if (user?.id) {
@@ -75,21 +72,28 @@ function HeaderRightContent({ onCloseMenu }) {
         }
     }, [dispatch, user?.id]);
 
-    return (
-        <div className='flex lg:items-center lg:flex-row flex-col gap-4 ml-6'>
-            <Sheet open={openCartSheet} onOpenChange={setOpenCartSheet}>
-                <Button onClick={() => setOpenCartSheet(true)} variant='outline' size='icon' className="relative">
-                    <ShoppingCart  className='w-6 h-6' />
-                    <span className="absolute top-[-5px] right-[2px] font-bold text-sm">
-                        {cartItems?.items?.length || 0}
-                    </span>
-                    <span className='sr-only'>User cart</span>
-                </Button>
-                <UserCartWrapper
-                    setOpenCartSheet={setOpenCartSheet}
-                    cartItems={cartItems?.items?.length > 0 ? cartItems.items : []}
-                />
-            </Sheet>
+    const handleLogout = () => {
+        dispatch(resetTokenAndCrendentails());
+        sessionStorage.clear();
+        navigate('/auth/login');
+        setOpenMenuSheet(false);
+    };
+
+    const handleCartClick = () => {
+        setOpenMenuSheet(false); // close left menu sheet
+        setOpenCartSheet(true);  // open cart sheet
+    };
+
+    const HeaderRightContent = ({ isMobile = false }) => (
+        <div className={`flex ${isMobile ? "flex-col" : "flex-row"} gap-4 ml-6 `}>
+            <Button onClick={handleCartClick} variant='outline' size='icon' className="relative">
+                <ShoppingCart className='w-6 h-6' />
+                <span className="absolute top-[-5px] right-[2px] font-bold text-sm">
+                    {cartItems?.items?.length || 0}
+                </span>
+                <span className='sr-only'>User cart</span>
+            </Button>
+
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Avatar className='bg-black cursor-pointer'>
@@ -99,13 +103,11 @@ function HeaderRightContent({ onCloseMenu }) {
                     </Avatar>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent side='right' className='w-56'>
-                    <DropdownMenuLabel>
-                        Logged in as {user?.userName}
-                    </DropdownMenuLabel>
+                    <DropdownMenuLabel>Logged in as {user?.userName}</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => {
                         navigate('/shop/account');
-                        if (onCloseMenu) onCloseMenu();
+                        setOpenMenuSheet(false);
                     }}>
                         <CircleUser className='mr-2 h-4 w-4' />
                         Account
@@ -119,12 +121,6 @@ function HeaderRightContent({ onCloseMenu }) {
             </DropdownMenu>
         </div>
     );
-}
-
-// ShoppingHeader Component
-function ShoppingHeader(props) {
-    const { isAuthenticated } = useSelector(state => state.auth);
-    const [openMenuSheet, setOpenMenuSheet] = useState(false);
 
     return (
         <header className='fixed top-0 z-40 w-full border-b bg-background'>
@@ -133,6 +129,8 @@ function ShoppingHeader(props) {
                     <House className='h-6 w-6' />
                     <span className='font-bold'>E-Commerce Kapada Store</span>
                 </Link>
+
+                {/* Mobile Menu Sheet */}
                 <Sheet open={openMenuSheet} onOpenChange={setOpenMenuSheet}>
                     <SheetTrigger asChild>
                         <Button variant='outline' size="icon" className="lg:hidden">
@@ -142,15 +140,25 @@ function ShoppingHeader(props) {
                     </SheetTrigger>
                     <SheetContent side="left" className="w-full max-w-xs">
                         <MenuItems onItemClick={() => setOpenMenuSheet(false)} />
-                        <HeaderRightContent onCloseMenu={() => setOpenMenuSheet(false)} />
+                        <HeaderRightContent isMobile />
                     </SheetContent>
                 </Sheet>
+
+                {/* Desktop Menu */}
                 <div className="hidden lg:block">
                     <MenuItems />
                 </div>
                 <div className='hidden lg:block ml-6'>
                     <HeaderRightContent />
                 </div>
+
+                {/* Cart Sheet */}
+                <Sheet open={openCartSheet} onOpenChange={setOpenCartSheet}>
+                    <UserCartWrapper
+                        setOpenCartSheet={setOpenCartSheet}
+                        cartItems={cartItems?.items?.length > 0 ? cartItems.items : []}
+                    />
+                </Sheet>
             </div>
         </header>
     );

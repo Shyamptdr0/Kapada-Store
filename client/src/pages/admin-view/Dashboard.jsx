@@ -10,7 +10,7 @@ function AdminDashboard(props) {
     return (
        <div>
            <div className="container max-auto grid grid-cols-1 gap-8 ">
-                   <div className="flex flex-col rounded-lg border bg-background p-6 shadow-sm m-10">
+                   <div className="flex flex-col rounded-lg border bg-background  shadow-sm ml-5 mr-5 mt-3 mb-3">
                        <Tabs defaultValue="user">
                            <TabsList>
                                <TabsTrigger value="user">

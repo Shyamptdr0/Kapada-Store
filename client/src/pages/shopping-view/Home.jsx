@@ -1,8 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Button} from "@/components/ui/button";
-import bannerOne from "../../assets/banner-1.webp";
-import bannerTwo from "../../assets/banner-2.webp";
-import bannerThree from "../../assets/banner-3.webp";
+
 
 import nikeLogo from "../../assets/logo/nike.svg";
 import adidasLogo from "../../assets/logo/adidas.svg";
