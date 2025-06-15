@@ -19,18 +19,12 @@ function AdminDashboard(props) {
                                <TabsTrigger value="chart">
                                    Chart
                                </TabsTrigger>
-                               <TabsTrigger value="aa">
-                                   aaa
-                               </TabsTrigger>
                            </TabsList>
                            <TabsContent value="user">
                              <AdminClientList/>
                            </TabsContent>
                            <TabsContent value="chart">
                                   <ProductStockChart/>
-                           </TabsContent>
-                           <TabsContent value="aa">
-
                            </TabsContent>
                        </Tabs>
                    </div>

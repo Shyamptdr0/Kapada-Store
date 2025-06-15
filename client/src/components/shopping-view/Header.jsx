@@ -61,10 +61,11 @@ function MenuItems({ onItemClick }) {
 
     return (
         <nav className="flex flex-col mt-10 ml-6 mb-3 lg:mb-0 lg:mt-0 lg:items-center gap-6 lg:flex-row">
-            <div className="flex items-center justify-start gap-3 mt-0">
-                <img src={HeaderLogo} alt="header logo" className="h-12 w-30" />
+            <div className="block lg:hidden  items-center justify-start gap-3 mt-2 ml-2 mb-4">
+                <img src={HeaderLogo} alt="header logo" className="h-10 w-auto" />
+                <Separator className="my-4 ml-0 mb-0" />
             </div>
-            <Separator/>
+
             {shoppingViewHeaderMenuItems.map((menuItem) => (
                 <Label
                     key={menuItem.id}

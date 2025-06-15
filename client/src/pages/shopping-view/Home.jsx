@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from "react";
-import {Button} from "@/components/ui/button";
-import {Skeleton} from "@/components/ui/skeleton";
+import React, { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import nikeLogo from "../../assets/logo/nike.svg";
 import adidasLogo from "../../assets/logo/adidas.svg";
 import pumaLogo from "../../assets/logo/puma.svg";
@@ -11,34 +11,34 @@ import Women from "../../assets/women.svg";
 import {
     Shirt, Baby, Watch, Umbrella, ChevronLeft, ChevronRight
 } from "lucide-react";
-import {Card, CardContent} from "@/components/ui/card";
-import {useDispatch, useSelector} from "react-redux";
+import { Card, CardContent } from "@/components/ui/card";
+import { useDispatch, useSelector } from "react-redux";
 import {
     fetchAllFilteredProducts,
     fetchProductDetails,
 } from "@/store/shop/products-slice";
 import ShoppingProductTile from "@/components/shopping-view/ProductTile";
-import {addToCart, fetchCartItems} from "@/store/shop/cart-slice";
-import {toast} from "sonner";
-import {useNavigate} from "react-router-dom";
+import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 import ProductDetailsDialog from "@/components/shopping-view/ProductDetails";
-import {getFeatureImages} from "@/store/common-slice/index.js";
+import { getFeatureImages } from "@/store/common-slice/index.js";
 
 const categories = [
-    {id: "men", label: "Men", icon: Shirt},
-    {id: "women", label: "Women", icon: Women},
-    {id: "kids", label: "Kids", icon: Baby},
-    {id: "accessories", label: "Accessories", icon: Watch},
-    {id: "footwear", label: "Footwear", icon: Umbrella},
+    { id: "men", label: "Men", icon: Shirt },
+    { id: "women", label: "Women", icon: Women },
+    { id: "kids", label: "Kids", icon: Baby },
+    { id: "accessories", label: "Accessories", icon: Watch },
+    { id: "footwear", label: "Footwear", icon: Umbrella },
 ];
 
 const brands = [
-    {id: "nike", label: "Nike", icon: nikeLogo},
-    {id: "adidas", label: "Adidas", icon: adidasLogo},
-    {id: "puma", label: "Puma", icon: pumaLogo},
-    {id: "levi", label: "Levi's", icon: levisLogo},
-    {id: "zara", label: "Zara", icon: zaraLogo},
-    {id: "h&m", label: "H&M", icon: HMLogo},
+    { id: "nike", label: "Nike", icon: nikeLogo },
+    { id: "adidas", label: "Adidas", icon: adidasLogo },
+    { id: "puma", label: "Puma", icon: pumaLogo },
+    { id: "levi", label: "Levi's", icon: levisLogo },
+    { id: "zara", label: "Zara", icon: zaraLogo },
+    { id: "h&m", label: "H&M", icon: HMLogo },
 ];
 
 function ShoppingHome() {
@@ -46,14 +46,15 @@ function ShoppingHome() {
     const navigate = useNavigate();
     const [currentSlide, setCurrentSlide] = useState(0);
     const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
+    const [localLoading, setLocalLoading] = useState(true);
 
-    const {featureImageList, isLoading: featureLoading} = useSelector(state => state.commonFeature);
-    const {productList, productDetails, isLoading: productLoading} = useSelector(state => state.shopProducts);
-    const {user} = useSelector((state) => state.auth);
+    const { featureImageList } = useSelector(state => state.commonFeature);
+    const { productList, productDetails } = useSelector(state => state.shopProducts);
+    const { user } = useSelector((state) => state.auth);
 
     const handleNavigateToListingPage = (item, section) => {
         sessionStorage.removeItem("filters");
-        sessionStorage.setItem("filters", JSON.stringify({[section]: [item.id]}));
+        sessionStorage.setItem("filters", JSON.stringify({ [section]: [item.id] }));
         navigate("/shop/listing");
     };
 
@@ -71,16 +72,16 @@ function ShoppingHome() {
     };
 
     useEffect(() => {
-        if (featureImageList?.length > 0) {
-            const timer = setInterval(() => {
-                setCurrentSlide((prev) => (prev + 1) % featureImageList.length);
-            }, 5000);
-            return () => clearInterval(timer);
+        if (featureImageList?.length > 0 || productList?.length > 0) {
+            const timer = setTimeout(() => {
+                setLocalLoading(false);
+            }, 1000);
+            return () => clearTimeout(timer);
         }
-    }, [featureImageList]);
+    }, [featureImageList, productList]);
 
     useEffect(() => {
-        dispatch(fetchAllFilteredProducts({filterParams: {}, sortParams: "price-lowtohigh"}));
+        dispatch(fetchAllFilteredProducts({ filterParams: {}, sortParams: "price-lowtohigh" }));
     }, [dispatch]);
 
     useEffect(() => {
@@ -93,11 +94,20 @@ function ShoppingHome() {
         dispatch(getFeatureImages());
     }, [dispatch]);
 
+    useEffect(() => {
+        if (featureImageList?.length > 0) {
+            const timer = setInterval(() => {
+                setCurrentSlide((prev) => (prev + 1) % featureImageList.length);
+            }, 5000);
+            return () => clearInterval(timer);
+        }
+    }, [featureImageList]);
+
     return (
         <div className="flex flex-col min-h-screen">
             {/* Carousel */}
             <div className="relative w-full h-[200px] sm:h-[300px] md:h-[400px] lg:h-[500px] overflow-hidden mt-[65px]">
-                {featureLoading || !featureImageList?.length ? (
+                {localLoading || !featureImageList?.length ? (
                     <Skeleton className="w-full h-full" />
                 ) : (
                     featureImageList.map((slide, index) => (
@@ -109,7 +119,7 @@ function ShoppingHome() {
                         />
                     ))
                 )}
-                {!featureLoading && featureImageList?.length > 0 && (
+                {!localLoading && featureImageList?.length > 0 && (
                     <>
                         <Button
                             variant="outline"
@@ -136,7 +146,7 @@ function ShoppingHome() {
                 <div className="container mx-auto px-4">
                     <h2 className="text-3xl font-bold text-center mb-8">Shop by Category</h2>
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                        {featureLoading ? Array.from({length: 5}).map((_, i) => <Skeleton key={i} className="h-32 rounded-md" />) : categories.map((category) => (
+                        {localLoading ? Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-32 rounded-md" />) : categories.map((category) => (
                             <Card
                                 key={category.id}
                                 onClick={() => handleNavigateToListingPage(category, "category")}
@@ -161,7 +171,7 @@ function ShoppingHome() {
                 <div className="container mx-auto px-4">
                     <h2 className="text-3xl font-bold text-center mb-8">Shop by Brands</h2>
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                        {featureLoading ? Array.from({length: 6}).map((_, i) => <Skeleton key={i} className="h-32 rounded-md" />) : brands.map((brand) => (
+                        {localLoading ? Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-32 rounded-md" />) : brands.map((brand) => (
                             <Card
                                 key={brand.id}
                                 onClick={() => handleNavigateToListingPage(brand, "brand")}
@@ -182,7 +192,7 @@ function ShoppingHome() {
                 <div className="container mx-auto px-4">
                     <h2 className="text-3xl font-bold text-center mb-8">Featured Products</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                        {productLoading ? Array.from({length: 4}).map((_, i) => <Skeleton key={i} className="h-[300px] w-full rounded-md" />) : productList?.slice(0, 3).map((product) => (
+                        {localLoading ? Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-[300px] w-full rounded-md" />) : productList?.slice(0, 3).map((product) => (
                             <ShoppingProductTile
                                 key={product._id}
                                 product={product}
@@ -191,7 +201,7 @@ function ShoppingHome() {
                             />
                         ))}
 
-                        {!productLoading && productList?.length > 3 && (
+                        {!localLoading && productList?.length > 3 && (
                             <Card
                                 onClick={() => navigate("/shop/listing")}
                                 className="cursor-pointer hover:shadow-lg transition-shadow flex items-center justify-center"
