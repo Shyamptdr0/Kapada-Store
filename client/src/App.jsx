@@ -49,7 +49,8 @@ function App() {
         dispatch(checkAuth(token))
     }, [dispatch]);
 
-    if(isLoading)return  <Skeleton className="w-full h-full bg-grey " />
+    // if(isLoading)return  <Skeleton className="w-full h-screen animate-pulse bg-gray-100" />
+
 
 
     return (

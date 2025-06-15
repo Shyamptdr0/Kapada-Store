@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Button} from "@/components/ui/button";
-
-
+import {Skeleton} from "@/components/ui/skeleton";
 import nikeLogo from "../../assets/logo/nike.svg";
 import adidasLogo from "../../assets/logo/adidas.svg";
 import pumaLogo from "../../assets/logo/puma.svg";
@@ -9,16 +8,9 @@ import levisLogo from "../../assets/logo/levis.svg";
 import HMLogo from "../../assets/logo/h&m.svg";
 import zaraLogo from "../../assets/logo/zara.svg";
 import Women from "../../assets/women.svg";
-
 import {
-    Shirt,
-    Baby,
-    Watch,
-    Umbrella,
-    ChevronLeft,
-    ChevronRight,
+    Shirt, Baby, Watch, Umbrella, ChevronLeft, ChevronRight
 } from "lucide-react";
-
 import {Card, CardContent} from "@/components/ui/card";
 import {useDispatch, useSelector} from "react-redux";
 import {
@@ -31,8 +23,6 @@ import {toast} from "sonner";
 import {useNavigate} from "react-router-dom";
 import ProductDetailsDialog from "@/components/shopping-view/ProductDetails";
 import {getFeatureImages} from "@/store/common-slice/index.js";
-
-// const slides = [bannerOne, bannerTwo, bannerThree];
 
 const categories = [
     {id: "men", label: "Men", icon: Shirt},
@@ -56,12 +46,9 @@ function ShoppingHome() {
     const navigate = useNavigate();
     const [currentSlide, setCurrentSlide] = useState(0);
     const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
-    const {featureImageList} = useSelector(state => state.commonFeature)
 
-
-    const {productList, productDetails} = useSelector(
-        (state) => state.shopProducts
-    );
+    const {featureImageList, isLoading: featureLoading} = useSelector(state => state.commonFeature);
+    const {productList, productDetails, isLoading: productLoading} = useSelector(state => state.shopProducts);
     const {user} = useSelector((state) => state.auth);
 
     const handleNavigateToListingPage = (item, section) => {
@@ -75,13 +62,7 @@ function ShoppingHome() {
     };
 
     const handleAddToCart = (productId) => {
-        dispatch(
-            addToCart({
-                userId: user?.id,
-                productId,
-                quantity: 1,
-            })
-        ).then((data) => {
+        dispatch(addToCart({ userId: user?.id, productId, quantity: 1 })).then((data) => {
             if (data?.payload?.success) {
                 dispatch(fetchCartItems(user?.id));
                 toast.success("Product added to cart");
@@ -109,47 +90,45 @@ function ShoppingHome() {
     }, [productDetails]);
 
     useEffect(() => {
-        dispatch(getFeatureImages())
+        dispatch(getFeatureImages());
     }, [dispatch]);
-
 
     return (
         <div className="flex flex-col min-h-screen">
             {/* Carousel */}
             <div className="relative w-full h-[200px] sm:h-[300px] md:h-[400px] lg:h-[500px] overflow-hidden mt-[65px]">
-                {
-                    featureImageList && featureImageList.length > 0 ?
-
+                {featureLoading || !featureImageList?.length ? (
+                    <Skeleton className="w-full h-full" />
+                ) : (
                     featureImageList.map((slide, index) => (
-                    <img
-                        key={index}
-                        src={slide?.image}
-                        alt={`slide-${index}`}
-                        className={`absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-1000 ${
-                            index === currentSlide ? "opacity-100" : "opacity-0"
-                        }`}
-                    />
-                )) : null}
-                <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() =>
-                        setCurrentSlide((prev) => (prev - 1 + slides.length) % featureImageList.length)
-                    }
-                    className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-white/80"
-                >
-                    <ChevronLeft className="w-4 h-4"/>
-                </Button>
-                <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() =>
-                        setCurrentSlide((prev) => (prev + 1) % featureImageList.length)
-                    }
-                    className="absolute top-1/2 right-2 transform -translate-y-1/2 bg-white/80"
-                >
-                    <ChevronRight className="w-4 h-4"/>
-                </Button>
+                        <img
+                            key={index}
+                            src={slide?.image}
+                            alt={`slide-${index}`}
+                            className={`absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-1000 ${index === currentSlide ? "opacity-100" : "opacity-0"}`}
+                        />
+                    ))
+                )}
+                {!featureLoading && featureImageList?.length > 0 && (
+                    <>
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => setCurrentSlide((prev) => (prev - 1 + featureImageList.length) % featureImageList.length)}
+                            className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-white/80"
+                        >
+                            <ChevronLeft className="w-4 h-4" />
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => setCurrentSlide((prev) => (prev + 1) % featureImageList.length)}
+                            className="absolute top-1/2 right-2 transform -translate-y-1/2 bg-white/80"
+                        >
+                            <ChevronRight className="w-4 h-4" />
+                        </Button>
+                    </>
+                )}
             </div>
 
             {/* Categories */}
@@ -157,7 +136,7 @@ function ShoppingHome() {
                 <div className="container mx-auto px-4">
                     <h2 className="text-3xl font-bold text-center mb-8">Shop by Category</h2>
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                        {categories.map((category) => (
+                        {featureLoading ? Array.from({length: 5}).map((_, i) => <Skeleton key={i} className="h-32 rounded-md" />) : categories.map((category) => (
                             <Card
                                 key={category.id}
                                 onClick={() => handleNavigateToListingPage(category, "category")}
@@ -165,9 +144,9 @@ function ShoppingHome() {
                             >
                                 <CardContent className="flex flex-col items-center justify-center p-6">
                                     {typeof category.icon === "string" ? (
-                                        <img src={category.icon} alt='image' className="w-10 h-10 mb-4"/>
+                                        <img src={category.icon} alt='image' className="w-10 h-10 mb-4" />
                                     ) : (
-                                        <category.icon className="w-10 h-10 mb-4 text-primary"/>
+                                        <category.icon className="w-10 h-10 mb-4 text-primary" />
                                     )}
                                     <span className="font-semibold">{category.label}</span>
                                 </CardContent>
@@ -182,18 +161,14 @@ function ShoppingHome() {
                 <div className="container mx-auto px-4">
                     <h2 className="text-3xl font-bold text-center mb-8">Shop by Brands</h2>
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                        {brands.map((brand) => (
+                        {featureLoading ? Array.from({length: 6}).map((_, i) => <Skeleton key={i} className="h-32 rounded-md" />) : brands.map((brand) => (
                             <Card
                                 key={brand.id}
                                 onClick={() => handleNavigateToListingPage(brand, "brand")}
                                 className="cursor-pointer hover:shadow-lg transition-shadow"
                             >
                                 <CardContent className="flex flex-col items-center justify-center p-6">
-                                    {typeof brand.icon === "string" ? (
-                                        <img src={brand.icon} className="w-10 h-10 mb-4"/>
-                                    ) : (
-                                        <brand.icon className="w-10 h-10 mb-4 text-primary"/>
-                                    )}
+                                    <img src={brand.icon} className="w-10 h-10 mb-4" />
                                     <span className="font-semibold">{brand.label}</span>
                                 </CardContent>
                             </Card>
@@ -207,17 +182,16 @@ function ShoppingHome() {
                 <div className="container mx-auto px-4">
                     <h2 className="text-3xl font-bold text-center mb-8">Featured Products</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                        {productList?.length > 0 &&
-                            productList.slice(0, 3).map((product) => (
-                                <ShoppingProductTile
-                                    key={product._id}
-                                    product={product}
-                                    handleGetProductDetails={handleGetProductDetails}
-                                    handleAddToCart={handleAddToCart}
-                                />
-                            ))}
+                        {productLoading ? Array.from({length: 4}).map((_, i) => <Skeleton key={i} className="h-[300px] w-full rounded-md" />) : productList?.slice(0, 3).map((product) => (
+                            <ShoppingProductTile
+                                key={product._id}
+                                product={product}
+                                handleGetProductDetails={handleGetProductDetails}
+                                handleAddToCart={handleAddToCart}
+                            />
+                        ))}
 
-                        {productList?.length > 3 && (
+                        {!productLoading && productList?.length > 3 && (
                             <Card
                                 onClick={() => navigate("/shop/listing")}
                                 className="cursor-pointer hover:shadow-lg transition-shadow flex items-center justify-center"
@@ -228,7 +202,6 @@ function ShoppingHome() {
                                 </CardContent>
                             </Card>
                         )}
-
                     </div>
                 </div>
             </section>
