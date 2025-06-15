@@ -143,10 +143,50 @@ const deleteProduct = async (req, res) => {
     }
 };
 
+
+
+// geting pie chart data
+// controller/admin/productController.js
+
+const getProductStockPerCategory = async (req, res) => {
+    try {
+        const data = await Products.aggregate([
+            {
+                $group: {
+                    _id: "$category",
+                    totalStock: { $sum: "$totalStock" },
+                },
+            },
+            {
+                $project: {
+                    category: "$_id",
+                    totalStock: 1,
+                    _id: 0,
+                },
+            },
+        ]);
+
+        res.status(200).json({
+            success: true,
+            data,
+        });
+    } catch (error) {
+        console.error("Stock per category error:", error);
+        res.status(500).json({
+            success: false,
+            message: "Error fetching category stock",
+        });
+    }
+};
+
+
+
+
 module.exports = {
     handleImageUpload,
     addProduct,
     fetchAllProduct,
     editProduct,
     deleteProduct,
+    getProductStockPerCategory,
 };

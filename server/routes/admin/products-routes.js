@@ -1,6 +1,6 @@
 const express = require('express');
 
-const {handleImageUpload,addProduct,editProduct,deleteProduct,fetchAllProduct} = require('../../controllers/admin/products-controller')
+const {handleImageUpload,addProduct,editProduct,deleteProduct,fetchAllProduct,getProductStockPerCategory} = require('../../controllers/admin/products-controller')
 
 const {upload} = require("../../helpers/cloudinary")
 
@@ -11,5 +11,6 @@ router.post('/add', addProduct)
 router.put('/edit/:id', editProduct)
 router.delete('/delete/:id', deleteProduct)
 router.get('/get', fetchAllProduct)
+router.get('/stock', getProductStockPerCategory)
 
 module.exports = router;

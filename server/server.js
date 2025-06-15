@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const authRouter = require("./routes/auth/auth-routes")
+const adminAllUserRouter = require("./routes/admin/all-user-routes")
 const adminProductsRouter = require("./routes/admin/products-routes")
 const adminOrderRouter = require("./routes/admin/order-routes")
 const shopProductsRouter = require("./routes/shop/product-route")
@@ -43,7 +44,8 @@ console.log("CORS allowed origin:", process.env.CLIENT_BASE_URL);
 
 app.use(cookieParser());
 app.use(express.json());
-app.use('/api/auth', authRouter)
+app.use('/api/auth', authRouter);
+app.use('/api/admin/user', adminAllUserRouter)
 app.use('/api/admin/products',adminProductsRouter);
 app.use('/api/admin/orders',adminOrderRouter)
 app.use('/api/shop/products', shopProductsRouter);

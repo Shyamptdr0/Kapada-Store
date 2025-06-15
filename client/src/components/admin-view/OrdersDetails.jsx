@@ -33,6 +33,8 @@ function AdminOrdersDetailsView({ orderDetails }) {
     const { user } = useSelector(state => state.auth);
     const dispatch = useDispatch();
 
+
+
     function handleUpdateStatus(event) {
         event.preventDefault();
         const { status } = formData;
@@ -93,7 +95,7 @@ function AdminOrdersDetailsView({ orderDetails }) {
                     <Separator />
 
                     {/* Order Items */}
-                    <div className="grid mt-6 gap-4">
+                    <div className="grid mb-3 mt-6 gap-4">
                         <div className="grid gap-2">
                             <div className="font-medium">Order Details</div>
                             <ul className="grid gap-3">
@@ -108,6 +110,8 @@ function AdminOrdersDetailsView({ orderDetails }) {
                             </ul>
                         </div>
                     </div>
+
+                    <Separator />
 
                     {/* Shipping Info */}
                     <div className="grid mt-6 gap-4">
