@@ -8,6 +8,7 @@ import levisLogo from "../../assets/logo/levis.svg";
 import HMLogo from "../../assets/logo/h&m.svg";
 import zaraLogo from "../../assets/logo/zara.svg";
 import Women from "../../assets/women.svg";
+import Shoes from  "../../assets/shoes.svg"
 import {
     Shirt, Baby, Watch, Umbrella, ChevronLeft, ChevronRight
 } from "lucide-react";
@@ -29,7 +30,7 @@ const categories = [
     { id: "women", label: "Women", icon: Women },
     { id: "kids", label: "Kids", icon: Baby },
     { id: "accessories", label: "Accessories", icon: Watch },
-    { id: "footwear", label: "Footwear", icon: Umbrella },
+    { id: "footwear", label: "Footwear", icon: Shoes },
 ];
 
 const brands = [
@@ -75,7 +76,7 @@ function ShoppingHome() {
         if (featureImageList?.length > 0 || productList?.length > 0) {
             const timer = setTimeout(() => {
                 setLocalLoading(false);
-            }, 1000);
+            }, 500);
             return () => clearTimeout(timer);
         }
     }, [featureImageList, productList]);

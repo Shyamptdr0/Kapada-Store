@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 
 // Auth Section
@@ -32,20 +32,23 @@ import SearchProducts from '@/pages/shopping-view/Search.jsx';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { checkAuth } from '@/store/auth-slice/index.js';
-import { Skeleton } from '@/components/ui/skeleton';
 
 function App() {
-    const { isAuthenticated, user, isLoading } = useSelector((state) => state.auth);
+    const { isAuthenticated, user } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
+    const [authChecked, setAuthChecked] = useState(false);
 
     useEffect(() => {
         const token = JSON.parse(sessionStorage.getItem('token'));
-        dispatch(checkAuth(token));
+        if (token) {
+            dispatch(checkAuth(token)).finally(() => setAuthChecked(true));
+        } else {
+            setAuthChecked(true); // No token = proceed unauthenticated
+        }
     }, [dispatch]);
 
-
-    if (isLoading) {
-        return
+    if (!authChecked) {
+        return null; // Or return a loading spinner if you want
     }
 
     return (
