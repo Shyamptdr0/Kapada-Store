@@ -14,15 +14,15 @@ const initialState = {
 
 function AuthLogin() {
     const [formData, setFormData] = useState(initialState);
-    // const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
     const dispatch = useDispatch();
 
     const onSubmit = async (event) => {
         event.preventDefault();
-        // setLoading(true);
+        setLoading(true);
 
         dispatch(loginUser(formData)).then((data) => {
-            // setLoading(false);
+            setLoading(false);
             if (data?.payload?.success) {
                 toast.success(data?.payload?.message);
             } else {
@@ -31,17 +31,17 @@ function AuthLogin() {
         });
     };
 
-    // if (loading) {
-    //     return (
-    //         <div className="w-full max-w-md mx-auto space-y-4">
-    //             <Skeleton className="h-8 w-3/4" />
-    //             <Skeleton className="h-5 w-full" />
-    //             <Skeleton className="h-10 w-full" />
-    //             <Skeleton className="h-10 w-full" />
-    //             <Skeleton className="h-10 w-full" />
-    //         </div>
-    //     );
-    // }
+    if (loading) {
+        return (
+            <div className="w-full max-w-md mx-auto space-y-4">
+                <Skeleton className="h-8 w-3/4" />
+                <Skeleton className="h-5 w-full" />
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+            </div>
+        );
+    }
 
     return (
         <div className="mx-auto w-full max-w-md space-y-6">
