@@ -35,6 +35,7 @@ import { checkAuth } from '@/store/auth-slice/index.js';
 
 function App() {
     const { isAuthenticated, user } = useSelector((state) => state.auth);
+    const isLoading = useSelector((state) => state.globalLoading.isLoading); // Global loader
     const dispatch = useDispatch();
     const [authChecked, setAuthChecked] = useState(false);
 
@@ -47,12 +48,18 @@ function App() {
         }
     }, [dispatch]);
 
-    if (!authChecked) {
-        return null; // Or return a loading spinner if you want
-    }
+    if (!authChecked) return null;
 
     return (
         <div className="flex flex-col overflow-hidden bg-white">
+            {/* Global Loading Spinner */}
+            {isLoading && (
+                <div className="fixed inset-0 z-50 bg-white/80 flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-blue-600"></div>
+                    <span className="ml-4 text-lg font-semibold">Loading...</span>
+                </div>
+            )}
+
             <Routes>
                 <Route
                     path="/"
