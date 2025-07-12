@@ -1,4 +1,3 @@
-
 require('dotenv').config()
 
 
@@ -20,25 +19,24 @@ const commonFeatureRouter = require("./routes/common/feature-route")
 
 mongoose
     .connect(process.env.MONGODB_URL)
-    .then(()=>console.log("MongoDB is connected!"))
-    .catch((error)=>console.log(error));
+    .then(() => console.log("MongoDB is connected!"))
+    .catch((error) => console.log(error));
 
 const app = express()
 const PORT = process.env.PORT || 5000;
 
 app.use(cors({
-    origin: process.env.CLIENT_BASE_URL,
-    methods: "GET,POST,PUT,DELETE",
-    allowedHeaders: [
-        "Content-type",
-        "Authorization",
-        "Cache-Control",
-        "Expires",
-        "Pragma",
-
-    ],
-    credentials: true,
+    origin: (origin, callback) => {
+        const allowedOrigins = [process.env.CLIENT_BASE_URL];
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
+    credentials: true
 }));
+
 
 console.log("CORS allowed origin:", process.env.CLIENT_BASE_URL);
 
@@ -46,10 +44,10 @@ app.use(cookieParser());
 app.use(express.json());
 app.use('/api/auth', authRouter);
 app.use('/api/admin/user', adminAllUserRouter)
-app.use('/api/admin/products',adminProductsRouter);
-app.use('/api/admin/orders',adminOrderRouter)
+app.use('/api/admin/products', adminProductsRouter);
+app.use('/api/admin/orders', adminOrderRouter)
 app.use('/api/shop/products', shopProductsRouter);
-app.use('/api/shop/cart',shopCartRouter)
+app.use('/api/shop/cart', shopCartRouter)
 app.use('/api/shop/address', shopAddressRouter);
 app.use('/api/shop/order', shopOrderRouter)
 app.use('/api/shop/search', shopSearchRouter)
