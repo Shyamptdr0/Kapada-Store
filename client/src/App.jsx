@@ -41,12 +41,24 @@ function App() {
 
     useEffect(() => {
         const token = JSON.parse(sessionStorage.getItem('token'));
-        if (token) {
-            dispatch(checkAuth(token)).finally(() => setAuthChecked(true));
-        } else {
-            setAuthChecked(true); // No token = proceed unauthenticated
-        }
+
+        const check = async () => {
+            if (token) {
+                try {
+                    await dispatch(checkAuth(token));
+                } catch (error) {
+                    console.error("Auth check error:", error);
+                }
+            }
+            setAuthChecked(true);
+        };
+
+        // Delay to avoid Render free-tier 429 rate-limiting
+        const timer = setTimeout(() => check(), 800); // delay 800ms
+
+        return () => clearTimeout(timer); // cleanup on unmount
     }, [dispatch]);
+
 
     if (!authChecked) return null;
 
